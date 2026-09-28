@@ -34,4 +34,9 @@ def parse_shortcode(shortcode=None):
                     #If stats is used in the API call, then instead return all the information and how many times that url has been accessed.
                     results = db.retrieve_entry(shortcode)
                     return jsonify(results), 201
+        case "PUT":
+            data = request.get_json()
+            url = data.get('url')
+            db.update_entry(shortcode, url)
+            return f"Updated entry {shortcode} successfully", 201
 

@@ -110,3 +110,18 @@ def retrieve_entry(key: str):
             cursor.close()
         if 'connection' in locals() and connection.is_connected():
             connection.close()
+
+def update_entry(key: str, url: str):
+    db_query = "UPDATE urls SET url = %s WHERE shortcode = %s"
+    connection, cursor = establish_db_connection()
+    try:
+        cursor.execute(db_query, (url, key))
+        connection.commit()
+    except mysql.connector.Error as e:
+        print(f"Error: {e}")
+    finally:
+        if 'cursor' in locals() and cursor is not None:
+            cursor.close()
+        if 'connection' in locals() and connection.is_connected():
+            connection.close()
+
