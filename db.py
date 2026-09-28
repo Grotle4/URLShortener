@@ -30,41 +30,37 @@ def create_db_entry(url: str, key: str):
         "created_at": timestamp,
         "updated_at": timestamp
     }
-    establish_db_connection(db_entry)
+    connection, cursor = establish_db_connection()
+    enter_into_db(db_entry, cursor)
 
 
-def establish_db_connection(entry:dict):
+def establish_db_connection():
     load_dotenv()
     db_user = os.getenv("USER")
     db_pass = os.getenv("PASSWORD")
+    db_host = os.getenv("HOST")
+    db_name = os.getenv("DB")
     try:
         connection = mysql.connector.connect(
-            host="localhost",
+            host=db_host,
             user=db_user,
             password=db_pass,
-            database="urlshortener"
+            database=db_name
         )
 
         if connection.is_connected():
             print("Connected")
 
             cursor = connection.cursor()
-
-            entry["short_code"] = check_for_dupes(entry["short_code"], cursor, connection)
-
-            enter_into_db(entry, cursor)
-            connection.commit()
+            return connection, cursor
     except Error as e:
         print(f"Error while connecting to MySQL: {e}")
 
-    finally:
-        if 'cursor' in locals() and cursor is not None:
-            cursor.close()
-        if 'connection' in locals() and connection.is_connected():
-            connection.close()
 
 
-def enter_into_db(entry:dict, cursor):
+def enter_into_db(entry:dict, cursor, connection):
+    entry["short_code"] = check_for_dupes(entry["short_code"], cursor, connection)
+
     db_query = "INSERT INTO urls (url, shortcode, createdAt, updatedAt) VALUES (%s, %s, %s, %s)"
 
     values = tuple(entry.values())
@@ -72,8 +68,15 @@ def enter_into_db(entry:dict, cursor):
     try:
         cursor.execute(db_query, values)
         print(f"Successfully inserted row ID: {cursor.lastrowid}")
+        connection.commit()
     except mysql.connector.Error as e:
         print(f"Error: {e}")
+    finally:
+            if 'cursor' in locals() and cursor is not None:
+                cursor.close()
+            if 'connection' in locals() and connection.is_connected():
+                connection.close()
+    
 
 
 def check_for_dupes(short_key: str, cursor, connection):
@@ -91,5 +94,19 @@ def check_for_dupes(short_key: str, cursor, connection):
         new_string = parse_URL.generate_random_string()
         check_for_dupes(new_string, cursor, connection)
 
+def retrieve_entry(key: str):
+    db_query = "SELECT * FROM urls WHERE shortcode = %s"
+    connection, cursor = establish_db_connection()
+    cursor.execute(db_query, (key,))
 
-    
+    try:
+        results = cursor.fetchone()
+        print(f"Found this entry: {results}")
+        return results
+    except mysql.connector.Error as e:
+        print(f"Error: {e}")
+    finally:
+        if 'cursor' in locals() and cursor is not None:
+            cursor.close()
+        if 'connection' in locals() and connection.is_connected():
+            connection.close()
