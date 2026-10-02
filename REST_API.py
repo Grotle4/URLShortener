@@ -21,8 +21,10 @@ def shorten_url():
             #Code here should then process the submitted url and return a shortened one.
             data = request.get_json()
             submitted_url = data.get('url')
-            parse_URL.process_url(submitted_url)
-            return "URL recieved successfully", 201
+            db_result = parse_URL.process_url(submitted_url)
+            if db_result["status"] == "error":
+                return jsonify(db_result), 400
+            return jsonify(db_result), 201
         
 
 
@@ -30,16 +32,23 @@ def shorten_url():
 def parse_shortcode(shortcode=None):
     match request.method:
         case "GET":
-                    #Code here should check database for the shortened url.
-                    #If stats is used in the API call, then instead return all the information and how many times that url has been accessed.
-                    results = db.retrieve_entry(shortcode)
-                    return jsonify(results), 201
+            #Code here should check database for the shortened url.
+            #If stats is used in the API call, then instead return all the information and how many times that url has been accessed.
+            results, db_result = db.retrieve_entry(shortcode)
+            if db_result["status"] == "error":
+                return jsonify(db_result), 400
+            return jsonify(results), 201
         case "PUT":
             data = request.get_json()
             url = data.get('url')
-            db.update_entry(shortcode, url)
+            db_result = db.update_entry(shortcode, url)
+            if db_result["status"] == "error":
+                return jsonify(db_result), 400
+            
             return f"Updated entry {shortcode} successfully", 201
         case "DELETE":
-              db.delete_entry(shortcode)
-              return f"Deleted entry {shortcode} succesfully", 201
+            db_result = db.delete_entry(shortcode)
+            if db_result["status"] == "error":
+                return jsonify(db_result), 400
+            return f"Deleted entry {shortcode} succesfully", 201
 
