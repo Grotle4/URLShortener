@@ -56,8 +56,6 @@ def establish_db_connection():
         )
 
         if connection.is_connected():
-            print("Connected")
-
             cursor = connection.cursor()
             return connection, cursor, {"status": "success", "message": f"Successfully connected."}
     except mysql.connector.Error as e:
@@ -82,7 +80,6 @@ def enter_into_db(entry:dict, cursor, connection):
 
         return {"status": "success", "message": f"Sucessfully inserted item."}, entry
     except mysql.connector.Error as e:
-        print(f"Error: {e}")
         return {"status": "error", "message": f"{e.msg}"}, entry
     finally:
             if 'cursor' in locals() and cursor is not None:
@@ -119,14 +116,12 @@ def retrieve_entry(key: str):
         if not results:
             return {}, {"status": "error", "message": f"No item found with short code: {key}."}
         else:
-            print(f"Found this entry: {results}")
             cursor.execute(db_access_query, (key,))
             connection.commit()
 
             return results, {"status": "success", "message": "Sucessfully retrieved item."}
         
     except mysql.connector.Error as e:
-        print(f"Error: {e}")
         return {}, {"status": "error", "message": f"{e.msg}"}
     
     finally:
@@ -161,7 +156,6 @@ def update_entry(key: str, url: str):
             return {"status": "success", "message": f"Sucessfully updated item {key} with url: {url}."}
         
     except mysql.connector.Error as e:
-        print(f"Error: {e}")
         return {"status": "error", "message": f"{e.msg}"}
     
     finally:
@@ -186,7 +180,6 @@ def delete_entry(key: str):
             return {"status": "success", "message": f"Sucessfully deleted item {key}."}
         
     except mysql.connector.Error as e:
-        print(f"Error: {e}")
         return {"status": "error", "message": f"{e.msg}"}
     
     finally:
