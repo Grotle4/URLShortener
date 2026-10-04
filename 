@@ -1,0 +1,77 @@
+[33mcommit dd7f61a835e76d46ffeaa821623f1d4d25259fa4[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdev[m[33m, [m[1;31morigin/dev[m[33m)[m
+Author: Dylan <lightfury954@gmail.com>
+Date:   Sun Sep 27 23:11:08 2026 -0400
+
+    Added ability to send PUT request to update existing entries based on short code. Also did minor code cleanup.
+
+[33mcommit e5ff159f2d9337ab90933c0782f6431aaa071ded[m
+Author: Dylan <lightfury954@gmail.com>
+Date:   Sun Sep 27 22:52:04 2026 -0400
+
+    Updated API setup so that way its using an optional path parameter for calls that require additional data.
+
+[33mcommit 24112bbfa90546beaf55858010bb7e9f8394365e[m
+Author: Dylan <lightfury954@gmail.com>
+Date:   Sun Sep 27 22:43:14 2026 -0400
+
+    Restructured the database call function to only include establishing connection. Added feature as well to be able to retrieve a database entry from the short code using a GET request.
+
+[33mcommit 9fb1fe363e34c0d822bb8749542010fd3a542514[m
+Author: Dylan <lightfury954@gmail.com>
+Date:   Wed Sep 23 22:50:39 2026 -0400
+
+    Moved duplicate check into db python script to keep all queries in one location.
+
+[33mcommit e1e2bb4146312306586a2c7dafcec96d94cdc4b1[m
+Author: Dylan <lightfury954@gmail.com>
+Date:   Wed Sep 23 22:43:12 2026 -0400
+
+    Added feature to check database for duplicate shortcode to guarantee no duplicates.
+
+[33mcommit 7817b3bf2ec602576867ea0fdb23423bfa15158b[m
+Author: Dylan <lightfury954@gmail.com>
+Date:   Wed Sep 23 22:32:50 2026 -0400
+
+    Added functionality to insert data into mySQL database.
+
+[33mcommit 8ebe183107d1810a71014fcd6f9d3c425b057284[m
+Author: Dylan <lightfury954@gmail.com>
+Date:   Wed Sep 23 22:17:53 2026 -0400
+
+    Created shortened url generation and begun setting up database connection.
+
+[33mcommit 6a3964fdcff1646771b9b785454ed6234b38ae84[m
+Author: Dylan <lightfury954@gmail.com>
+Date:   Sun Sep 20 21:11:50 2026 -0400
+
+    Updated structure of main API and also removed html and css as this is primairily a REST API project.
+
+[33mcommit 44a81015750f00673640fc892813c52fa750d4c7[m
+Author: Dylan <lightfury954@gmail.com>
+Date:   Sun Sep 20 20:38:02 2026 -0400
+
+    Adding any extra untracked files.
+
+[33mcommit d93f3d288bb030e8420a02aef9616702e517536b[m
+Author: Dylan <lightfury954@gmail.com>
+Date:   Sun Sep 20 20:36:55 2026 -0400
+
+    Added homepage functionality along with sending url data back to api. Also added temporary processing page while url is being shortened
+
+[33mcommit 414ae220bdcfc217cdaba21119209e78a37444a3[m
+Author: Dylan <lightfury954@gmail.com>
+Date:   Sun Sep 20 01:13:27 2026 -0400
+
+    Added folder structure
+
+[33mcommit 74d63389579032e8f9e8cfc26ee0fbb90a202f85[m
+Author: Dylan <lightfury954@gmail.com>
+Date:   Sun Sep 20 01:08:19 2026 -0400
+
+    Setup project structure with html and css files. Reorganized folder structure as well.
+
+[33mcommit 763c0c73b36c40969f42d5de52d50fb83c8a253d[m[33m ([m[1;31morigin/main[m[33m, [m[1;32mmain[m[33m)[m
+Author: Dylan <lightfury954@gmail.com>
+Date:   Sun Aug 30 22:33:31 2026 -0400
+
+    Creating intial repository and main python file

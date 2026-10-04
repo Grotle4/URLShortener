@@ -39,4 +39,7 @@ def parse_shortcode(shortcode=None):
             url = data.get('url')
             db.update_entry(shortcode, url)
             return f"Updated entry {shortcode} successfully", 201
+        case "DELETE":
+              db.delete_entry(shortcode)
+              return f"Deleted entry {shortcode} succesfully", 201
 

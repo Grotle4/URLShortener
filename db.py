@@ -125,3 +125,17 @@ def update_entry(key: str, url: str):
         if 'connection' in locals() and connection.is_connected():
             connection.close()
 
+
+def delete_entry(key: str):
+    db_query = "DELETE FROM urls WHERE shortcode = %s"
+    connection, cursor = establish_db_connection()
+    try:
+        cursor.execute(db_query, (key,))
+        connection.commit()
+    except mysql.connector.Error as e:
+        print(f"Error: {e}")
+    finally:
+        if 'cursor' in locals() and cursor is not None:
+            cursor.close()
+        if 'connection' in locals() and connection.is_connected():
+            connection.close()
