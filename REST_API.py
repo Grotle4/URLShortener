@@ -67,5 +67,18 @@ def shorten_url():
             
             return f"Deleted entry {shortcode} succesfully", 201
 
-
+@app.route("/shorten/stats", methods=["GET"])
+def get_stats():
+    shortcode = request.args.get("shortcode")
+    results, db_result = db.retrieve_entry(shortcode)
+    if db_result["status"] == "error":
+        return render_template("error_page.html", error_message=db_result["message"])
+    
+    return render_template("entry_page.html", 
+                            id=results[0], 
+                            url=results[1], 
+                            shortcode=results[2], 
+                            created_at=results[3], 
+                            updated_at=results[4],
+                            access_count=f"Number of times accessed: {results[5]}")
 

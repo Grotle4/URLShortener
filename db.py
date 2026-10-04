@@ -196,11 +196,6 @@ def delete_entry(key: str):
             connection.close()
 
 
-def get_stats(key: str):
-    pass
-
-
-
 def redirect_url():
     pass
 
