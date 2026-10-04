@@ -106,6 +106,7 @@ def check_for_dupes(short_key: str, cursor, connection):
 
 def retrieve_entry(key: str):
     db_query = "SELECT * FROM urls WHERE shortcode = %s"
+    db_access_query = "UPDATE urls SET accessCount = accessCount + 1 WHERE shortcode = %s"
 
     connection, cursor, connection_result = establish_db_connection()
     if connection_result["status"] == "error":
@@ -119,6 +120,9 @@ def retrieve_entry(key: str):
             return {}, {"status": "error", "message": f"No item found with short code: {key}."}
         else:
             print(f"Found this entry: {results}")
+            cursor.execute(db_access_query, (key,))
+            connection.commit()
+
             return results, {"status": "success", "message": "Sucessfully retrieved item."}
         
     except mysql.connector.Error as e:
@@ -138,6 +142,7 @@ def is_url(url_string):
 
 def update_entry(key: str, url: str):
     db_query = "UPDATE urls SET url = %s, updatedAt = %s WHERE shortcode = %s"
+    db_access_query = "UPDATE urls SET accessCount = accessCount + 1 WHERE shortcode = %s"
     connection, cursor, connection_result = establish_db_connection()
     if connection_result["status"] == "error":
         return connection_result
@@ -148,6 +153,7 @@ def update_entry(key: str, url: str):
         updated_time = datetime.now().strftime("%y-%m-%d %H:%M:%S")
         
         cursor.execute(db_query, (url, updated_time, key))
+        cursor.execute(db_access_query, (key,))
         if cursor.rowcount == 0:
             return {"status": "error", "message": f"No item found with short code: {key}."}
         else:
@@ -188,3 +194,14 @@ def delete_entry(key: str):
             cursor.close()
         if 'connection' in locals() and connection.is_connected():
             connection.close()
+
+
+def get_stats(key: str):
+    pass
+
+
+
+def redirect_url():
+    pass
+
+
