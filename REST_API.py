@@ -1,5 +1,3 @@
-from flask import Flask, request, jsonify, render_template
-
 """
 This script covers the api functionality to handle requests and store data to a database.
 Needs to be able to:
@@ -9,6 +7,8 @@ Then recieve the proper shortend url and send to database for storage.
 
 
 """
+from flask import Flask, request, jsonify, render_template
+import parse_URL
 
 app = Flask(__name__, template_folder="templates")
 
@@ -23,7 +23,7 @@ def shorten_url():
             #Code here should then process the submitted url and return a shortened one.
             data = request.get_json()
             submitted_url = data.get('url')
-            print(submitted_url)
+            parse_URL.process_url(submitted_url)
             return "URL recieved successfully", 201
         case "GET":
             #Code here should check database for the shortened url.
