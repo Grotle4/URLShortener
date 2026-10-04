@@ -36,7 +36,7 @@ def shorten_url():
             if db_result["status"] == "error":
                 return render_template("error_page.html", error_message=db_result["message"])
             
-            return jsonify(results), 201
+            return render_template("entry_page.html", id=results[0], url=results[1], shortcode=results[2], created_at=results[3], updated_at=results[4])
         case "PUT":
             data = request.get_json()
             url = data.get('url')
