@@ -20,7 +20,7 @@ import mysql.connector
 from mysql.connector import Error
 from dotenv import load_dotenv
 import os
-
+from parse_URL import check_for_dupes
 
 def create_db_entry(url: str, key: str):
     timestamp = datetime.now().strftime("%y-%m-%d %H:%M:%S")
@@ -50,6 +50,8 @@ def establish_db_connection(entry:dict):
 
             cursor = connection.cursor()
 
+            entry["shortcode"] = check_for_dupes()
+            
             enter_into_db(entry, cursor)
             connection.commit()
     except Error as e:
