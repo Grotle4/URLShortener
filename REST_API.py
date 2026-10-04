@@ -13,11 +13,8 @@ import db
 
 app = Flask(__name__, template_folder="templates")
 
-@app.route("/")
-def index():
-    return render_template("homepage.html")
 
-@app.route("/shorten", methods=["POST", "GET", "PUT"])
+@app.route("/shorten", methods=["POST"])
 def shorten_url():
     match request.method:
         case "POST":
@@ -26,16 +23,15 @@ def shorten_url():
             submitted_url = data.get('url')
             parse_URL.process_url(submitted_url)
             return "URL recieved successfully", 201
+        
+
+
+@app.route("/shorten/<string:shortcode>", methods=["GET", "PUT", "DELETE"])
+def parse_shortcode(shortcode=None):
+    match request.method:
         case "GET":
-            #Code here should check database for the shortened url.
-            #If stats is used in the API call, then instead return all the information and how many times that url has been accessed.
-            data = request.get_json()
-            submitted_url = data.get('url')
-            results = db.retrieve_entry(submitted_url)
-            return jsonify(results), 201
-        case "PUT":
-            #Code here should check data base for the shortened url code and update with new url
-            pass
-        case "DELETE":
-            #Code here should delete from database base on shortened url code
-            pass    
+                    #Code here should check database for the shortened url.
+                    #If stats is used in the API call, then instead return all the information and how many times that url has been accessed.
+                    results = db.retrieve_entry(shortcode)
+                    return jsonify(results), 201
+
