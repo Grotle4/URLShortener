@@ -19,7 +19,7 @@ def catch_all():
 
 
 
-@app.route("/shorten", methods=["POST"])
+@app.route("/shorten", methods=["POST","GET", "PUT", "DELETE"])
 def shorten_url():
     match request.method:
         case "POST":
@@ -30,16 +30,11 @@ def shorten_url():
                 return render_template("error_page.html", error_message=db_result["message"])
             
             return render_template("homepage.html", shortcode=f"Success! Heres your url: shorten.com/{short_key}")
-        
-
-
-@app.route("/shorten/<string:shortcode>", methods=["GET", "PUT", "DELETE"])
-def parse_shortcode(shortcode=None):
-    match request.method:
         case "GET":
+            shortcode = request.args.get("shortcode")
             results, db_result = db.retrieve_entry(shortcode)
             if db_result["status"] == "error":
-                return jsonify(db_result), 400
+                return render_template("error_page.html", error_message=db_result["message"])
             
             return jsonify(results), 201
         case "PUT":
@@ -47,13 +42,39 @@ def parse_shortcode(shortcode=None):
             url = data.get('url')
             db_result = db.update_entry(shortcode, url)
             if db_result["status"] == "error":
-                return jsonify(db_result), 400
+                return render_template("error_page.html", error_message=db_result["message"])
             
             return f"Updated entry {shortcode} successfully", 201
         case "DELETE":
             db_result = db.delete_entry(shortcode)
             if db_result["status"] == "error":
-                return jsonify(db_result), 400
+                return render_template("error_page.html", error_message=db_result["message"])
             
             return f"Deleted entry {shortcode} succesfully", 201
+        
+
+
+# @app.route("/shorten?shortcode=<string:shortcode>", methods=["GET", "PUT", "DELETE"])
+# def parse_shortcode(shortcode=None):
+#     match request.method:
+#         case "GET":
+#             results, db_result = db.retrieve_entry(shortcode)
+#             if db_result["status"] == "error":
+#                 return render_template("error_page.html", error_message=db_result["message"])
+            
+#             return jsonify(results), 201
+#         case "PUT":
+#             data = request.get_json()
+#             url = data.get('url')
+#             db_result = db.update_entry(shortcode, url)
+#             if db_result["status"] == "error":
+#                 return render_template("error_page.html", error_message=db_result["message"])
+            
+#             return f"Updated entry {shortcode} successfully", 201
+#         case "DELETE":
+#             db_result = db.delete_entry(shortcode)
+#             if db_result["status"] == "error":
+#                 return render_template("error_page.html", error_message=db_result["message"])
+            
+#             return f"Deleted entry {shortcode} succesfully", 201
 

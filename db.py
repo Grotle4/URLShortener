@@ -41,7 +41,7 @@ def create_db_entry(url: str, key: str):
 
 def establish_db_connection():
     load_dotenv()
-    
+
     db_user = os.getenv("USER")
     db_pass = os.getenv("PASSWORD")
     db_host = os.getenv("HOST")
@@ -107,7 +107,9 @@ def check_for_dupes(short_key: str, cursor, connection):
 def retrieve_entry(key: str):
     db_query = "SELECT * FROM urls WHERE shortcode = %s"
 
-    connection, cursor = establish_db_connection()
+    connection, cursor, connection_result = establish_db_connection()
+    if connection_result["status"] == "error":
+        return connection_result
 
     cursor.execute(db_query, (key,))
 
