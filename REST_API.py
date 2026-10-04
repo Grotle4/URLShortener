@@ -25,11 +25,11 @@ def shorten_url():
         case "POST":
             submitted_url = request.form.get('url')
             print(f"sub url: {submitted_url}")
-            db_result = parse_URL.process_url(submitted_url)
+            db_result, short_key = parse_URL.process_url(submitted_url)
             if db_result["status"] == "error":
                 return render_template("error_page.html", error_message=db_result["message"])
             
-            return jsonify(db_result), 201
+            return render_template("homepage.html", shortcode=f"Success! Heres your url: shorten.com/{short_key}")
         
 
 

@@ -35,16 +35,18 @@ def create_db_entry(url: str, key: str):
     connection, cursor, db_result = establish_db_connection()
     if db_result["status"] == "error":
         return db_result
-    db_entry_result = enter_into_db(db_entry, cursor, connection)
-    return db_entry_result
+    db_entry_result, final_result = enter_into_db(db_entry, cursor, connection)
+    return db_entry_result, final_result["short_code"]
 
 
 def establish_db_connection():
     load_dotenv()
+    
     db_user = os.getenv("USER")
     db_pass = os.getenv("PASSWORD")
     db_host = os.getenv("HOST")
     db_name = os.getenv("DB")
+
     try:
         connection = mysql.connector.connect(
             host=db_host,
@@ -71,17 +73,17 @@ def enter_into_db(entry:dict, cursor, connection):
     
     values = tuple(entry.values())
     if not is_url(values[0]):
-        return {"status": "error", "message": "Invalid url provided."}
+        return {"status": "error", "message": "Invalid url provided."}, entry
 
     try:
         cursor.execute(db_query, values)
 
-        print(f"Successfully inserted row ID: {cursor.lastrowid}")
-        return {"status": "success", "message": f"Sucessfully inserted item."}
         connection.commit()
+
+        return {"status": "success", "message": f"Sucessfully inserted item."}, entry
     except mysql.connector.Error as e:
         print(f"Error: {e}")
-        return {"status": "error", "message": f"{e.msg}"}
+        return {"status": "error", "message": f"{e.msg}"}, entry
     finally:
             if 'cursor' in locals() and cursor is not None:
                 cursor.close()
