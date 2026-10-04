@@ -12,7 +12,8 @@ def process_url(url: str):
     short_key = generate_random_string()
     print(f"short: {short_key}")
 
-    db.create_db_entry(url, short_key)
+    db_result = db.create_db_entry(url, short_key)
+    return db_result
 
 
 def generate_random_string():
