@@ -23,15 +23,17 @@ import os
 
 
 def create_db_entry(url: str, key: str):
-    timestamp = datetime.now().strftime("%y-%d-%m %H:%M:%S")
+    timestamp = datetime.now().strftime("%y-%m-%d %H:%M:%S")
     db_entry = {
         "url": url,
         "short_code": key,
         "created_at": timestamp,
         "updated_at": timestamp
     }
+    establish_db_connection(db_entry)
 
-def establish_db_connection():
+
+def establish_db_connection(entry:dict):
     load_dotenv()
     db_user = os.getenv("USER")
     db_pass = os.getenv("PASSWORD")
@@ -48,11 +50,28 @@ def establish_db_connection():
 
             cursor = connection.cursor()
 
-            cursor.execute("SELECT VERSION();")
-            db_version = cursor.fetchone(0)
-            print(f"Database version: {db_version}")
-    except:
-        pass
+            enter_into_db(entry, cursor)
+            connection.commit()
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
 
-def enter_into_db(entry:dict):
-    pass
+    finally:
+        if 'cursor' in locals() and cursor is not None:
+            cursor.close()
+        if 'connection' in locals() and connection.is_connected():
+            connection.close()
+
+def enter_into_db(entry:dict, cursor):
+    db_query = "INSERT INTO urls (url, shortcode, createdAt, updatedAt) VALUES (%s, %s, %s, %s)"
+
+    values = tuple(entry.values())
+
+    try:
+        cursor.execute(db_query, values)
+        print(f"Successfully inserted row ID: {cursor.lastrowid}")
+    except mysql.connector.Error as e:
+        print(f"Error: {e}")
+
+
+
+    

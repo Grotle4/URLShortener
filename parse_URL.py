@@ -14,4 +14,3 @@ def process_url(url: str):
     print(f"short: {short_key}")
     db.create_db_entry(url, short_key)
 
-    
