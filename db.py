@@ -114,9 +114,11 @@ def retrieve_entry(key: str):
         else:
             print(f"Found this entry: {results}")
             return results, {"status": "success", "message": "Sucessfully retrieved item."}
+        
     except mysql.connector.Error as e:
         print(f"Error: {e}")
         return {}, {"status": "error", "message": f"{e.msg}"}
+    
     finally:
         if 'cursor' in locals() and cursor is not None:
             cursor.close()
@@ -141,9 +143,11 @@ def update_entry(key: str, url: str):
         else:
             connection.commit()
             return {"status": "success", "message": f"Sucessfully updated item {key} with url: {url}."}
+        
     except mysql.connector.Error as e:
         print(f"Error: {e}")
         return {"status": "error", "message": f"{e.msg}"}
+    
     finally:
         if 'cursor' in locals() and cursor is not None:
             cursor.close()
@@ -153,7 +157,9 @@ def update_entry(key: str, url: str):
 
 def delete_entry(key: str):
     db_query = "DELETE FROM urls WHERE shortcode = %s"
+
     connection, cursor = establish_db_connection()
+    
     try:
         cursor.execute(db_query, (key,))
         if cursor.rowcount == 0:
@@ -161,9 +167,11 @@ def delete_entry(key: str):
         else:
             connection.commit()
             return {"status": "success", "message": f"Sucessfully deleted item {key}."}
+        
     except mysql.connector.Error as e:
         print(f"Error: {e}")
         return {"status": "error", "message": f"{e.msg}"}
+    
     finally:
         if 'cursor' in locals() and cursor is not None:
             cursor.close()

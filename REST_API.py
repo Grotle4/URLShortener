@@ -13,17 +13,23 @@ import db
 
 app = Flask(__name__, template_folder="templates")
 
+@app.route("/")
+def catch_all():
+    #Get some basic minimal frontend setup
+    pass
+
+
 
 @app.route("/shorten", methods=["POST"])
 def shorten_url():
     match request.method:
         case "POST":
-            #Code here should then process the submitted url and return a shortened one.
             data = request.get_json()
             submitted_url = data.get('url')
             db_result = parse_URL.process_url(submitted_url)
             if db_result["status"] == "error":
                 return jsonify(db_result), 400
+            
             return jsonify(db_result), 201
         
 
@@ -32,11 +38,10 @@ def shorten_url():
 def parse_shortcode(shortcode=None):
     match request.method:
         case "GET":
-            #Code here should check database for the shortened url.
-            #If stats is used in the API call, then instead return all the information and how many times that url has been accessed.
             results, db_result = db.retrieve_entry(shortcode)
             if db_result["status"] == "error":
                 return jsonify(db_result), 400
+            
             return jsonify(results), 201
         case "PUT":
             data = request.get_json()
@@ -50,5 +55,6 @@ def parse_shortcode(shortcode=None):
             db_result = db.delete_entry(shortcode)
             if db_result["status"] == "error":
                 return jsonify(db_result), 400
+            
             return f"Deleted entry {shortcode} succesfully", 201
 
