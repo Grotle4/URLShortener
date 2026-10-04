@@ -22,12 +22,20 @@
             <button type="submit">Search</button>
         </form>
     </div>
-        <div>
+    <div>
         <form method="post" action="/shorten">
             <input type="hidden" name="_method" value="PUT">
             <p>Enter a short code to update in database</p>
             <input type="text" placeholder="Short Code" name="shortcode" id="update-shortcode">
             <input type="text" placeholder="New URL" name="url" id="update-url">
+            <button type="submit">Update</button>
+        </form>
+    </div>
+    <div>
+        <form method="post" action="/shorten">
+            <input type="hidden" name="_method" value="DELETE">
+            <p>Enter a short code to delete in database</p>
+            <input type="text" placeholder="Short Code" name="shortcode" id="update-shortcode">
             <button type="submit">Update</button>
         </form>
     </div>

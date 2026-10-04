@@ -60,6 +60,7 @@ def shorten_url():
             
             return render_template("homepage.html", shortcode=f"Success! Successfully updated entry {shortcode} with URL: {url}")
         case "DELETE":
+            shortcode = request.form.get("shortcode")
             db_result = db.delete_entry(shortcode)
             if db_result["status"] == "error":
                 return render_template("error_page.html", error_message=db_result["message"])
