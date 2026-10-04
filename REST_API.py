@@ -15,8 +15,7 @@ app = Flask(__name__, template_folder="templates")
 
 @app.route("/")
 def catch_all():
-    #Get some basic minimal frontend setup
-    pass
+    return render_template("homepage.html")
 
 
 
@@ -24,11 +23,11 @@ def catch_all():
 def shorten_url():
     match request.method:
         case "POST":
-            data = request.get_json()
-            submitted_url = data.get('url')
+            submitted_url = request.form.get('url')
+            print(f"sub url: {submitted_url}")
             db_result = parse_URL.process_url(submitted_url)
             if db_result["status"] == "error":
-                return jsonify(db_result), 400
+                return render_template("error_page.html", error_message=db_result["message"])
             
             return jsonify(db_result), 201
         

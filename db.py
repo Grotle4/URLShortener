@@ -32,8 +32,11 @@ def create_db_entry(url: str, key: str):
         "created_at": timestamp,
         "updated_at": timestamp
     }
-    connection, cursor, db_status = establish_db_connection()
-    enter_into_db(db_entry, cursor)
+    connection, cursor, db_result = establish_db_connection()
+    if db_result["status"] == "error":
+        return db_result
+    db_entry_result = enter_into_db(db_entry, cursor, connection)
+    return db_entry_result
 
 
 def establish_db_connection():
@@ -54,9 +57,9 @@ def establish_db_connection():
             print("Connected")
 
             cursor = connection.cursor()
-            return connection, cursor
+            return connection, cursor, {"status": "success", "message": f"Successfully connected."}
     except mysql.connector.Error as e:
-        print(f"Error while connecting to MySQL: {e}")
+        return connection, cursor, {"status": "error", "message": f"Error connection to database: {e.msg}"}
         
 
 
@@ -88,23 +91,22 @@ def enter_into_db(entry:dict, cursor, connection):
 
 def check_for_dupes(short_key: str, cursor, connection):
     db_query = f"SELECT * FROM urls WHERE shortcode = '{short_key}'"
-    print("Executing dupe check")
     cursor.execute(db_query)
 
     results = cursor.fetchall()
 
     if not results:
-        print(f"Entry doesn't exist")
         return short_key
     else:
-        print(f"String exists in db")
         new_string = parse_URL.generate_random_string()
         check_for_dupes(new_string, cursor, connection)
 
 
 def retrieve_entry(key: str):
     db_query = "SELECT * FROM urls WHERE shortcode = %s"
+
     connection, cursor = establish_db_connection()
+
     cursor.execute(db_query, (key,))
 
     try:
@@ -157,9 +159,8 @@ def update_entry(key: str, url: str):
 
 def delete_entry(key: str):
     db_query = "DELETE FROM urls WHERE shortcode = %s"
-
-    connection, cursor = establish_db_connection()
     
+    connection, cursor = establish_db_connection()
     try:
         cursor.execute(db_query, (key,))
         if cursor.rowcount == 0:
