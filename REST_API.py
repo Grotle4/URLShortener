@@ -9,6 +9,7 @@ Then recieve the proper shortend url and send to database for storage.
 """
 from flask import Flask, request, jsonify, render_template
 import parse_URL
+import db
 
 app = Flask(__name__, template_folder="templates")
 
@@ -28,7 +29,10 @@ def shorten_url():
         case "GET":
             #Code here should check database for the shortened url.
             #If stats is used in the API call, then instead return all the information and how many times that url has been accessed.
-            pass
+            data = request.get_json()
+            submitted_url = data.get('url')
+            results = db.retrieve_entry(submitted_url)
+            return jsonify(results), 201
         case "PUT":
             #Code here should check data base for the shortened url code and update with new url
             pass
