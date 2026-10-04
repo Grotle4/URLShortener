@@ -11,15 +11,24 @@
     <div>
         <form method="post" action="/shorten">
             <p>Enter your URL to shorten it</p>
-            <input type="text" name="url" id="url">
+            <input type="text" placeholder="URL" name="url" id="url">
             <button type="submit">Submit</button>
         </form>
     </div>
     <div>
         <form method="get" action="/shorten">
             <p>Enter a short code to retrieve from database</p>
-            <input type="text" name="shortcode" id="shortcode">
+            <input type="text" placeholder="Short Code" name="shortcode" id="shortcode">
             <button type="submit">Search</button>
+        </form>
+    </div>
+        <div>
+        <form method="post" action="/shorten">
+            <input type="hidden" name="_method" value="PUT">
+            <p>Enter a short code to update in database</p>
+            <input type="text" placeholder="Short Code" name="shortcode" id="update-shortcode">
+            <input type="text" placeholder="New URL" name="url" id="update-url">
+            <button type="submit">Update</button>
         </form>
     </div>
 </body>

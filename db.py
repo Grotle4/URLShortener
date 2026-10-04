@@ -138,7 +138,9 @@ def is_url(url_string):
 
 def update_entry(key: str, url: str):
     db_query = "UPDATE urls SET url = %s WHERE shortcode = %s"
-    connection, cursor = establish_db_connection()
+    connection, cursor, connection_result = establish_db_connection()
+    if connection_result["status"] == "error":
+        return connection_result
     try:
         if not is_url(url):
             return {"status": "error", "message": "Invalid url provided."}
@@ -164,7 +166,9 @@ def update_entry(key: str, url: str):
 def delete_entry(key: str):
     db_query = "DELETE FROM urls WHERE shortcode = %s"
     
-    connection, cursor = establish_db_connection()
+    connection, cursor, connection_result = establish_db_connection()
+    if connection_result["status"] == "error":
+        return connection_result
     try:
         cursor.execute(db_query, (key,))
         if cursor.rowcount == 0:
