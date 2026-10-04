@@ -20,18 +20,5 @@ def generate_random_string():
     short_key = "".join(random.choices(random_sequence, k=5))
     return short_key
 
-def check_for_dupes(short_key: str, cursor, connection):
-    db_query = f"SELECT * FROM url WHERE shortcode = '{short_key}'"
 
-    cursor.execute(db_query)
-
-    results = cursor.fetchall()
-
-    if not results:
-        print(f"Entry doesn't exist")
-        return short_key
-    else:
-        print(f"String exists in db")
-        new_string = generate_random_string()
-        check_for_dupes(new_string, cursor, connection)
 

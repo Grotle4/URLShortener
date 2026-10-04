@@ -20,7 +20,7 @@ import mysql.connector
 from mysql.connector import Error
 from dotenv import load_dotenv
 import os
-from parse_URL import check_for_dupes
+import parse_URL
 
 def create_db_entry(url: str, key: str):
     timestamp = datetime.now().strftime("%y-%m-%d %H:%M:%S")
@@ -50,8 +50,8 @@ def establish_db_connection(entry:dict):
 
             cursor = connection.cursor()
 
-            entry["shortcode"] = check_for_dupes()
-            
+            entry["short_code"] = check_for_dupes(entry["short_code"], cursor, connection)
+
             enter_into_db(entry, cursor)
             connection.commit()
     except Error as e:
@@ -62,6 +62,7 @@ def establish_db_connection(entry:dict):
             cursor.close()
         if 'connection' in locals() and connection.is_connected():
             connection.close()
+
 
 def enter_into_db(entry:dict, cursor):
     db_query = "INSERT INTO urls (url, shortcode, createdAt, updatedAt) VALUES (%s, %s, %s, %s)"
@@ -74,6 +75,21 @@ def enter_into_db(entry:dict, cursor):
     except mysql.connector.Error as e:
         print(f"Error: {e}")
 
+
+def check_for_dupes(short_key: str, cursor, connection):
+    db_query = f"SELECT * FROM urls WHERE shortcode = '{short_key}'"
+    print("Executing dupe check")
+    cursor.execute(db_query)
+
+    results = cursor.fetchall()
+
+    if not results:
+        print(f"Entry doesn't exist")
+        return short_key
+    else:
+        print(f"String exists in db")
+        new_string = parse_URL.generate_random_string()
+        check_for_dupes(new_string, cursor, connection)
 
 
     
