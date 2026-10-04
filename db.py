@@ -137,15 +137,17 @@ def is_url(url_string):
 
 
 def update_entry(key: str, url: str):
-    db_query = "UPDATE urls SET url = %s WHERE shortcode = %s"
+    db_query = "UPDATE urls SET url = %s, updatedAt = %s WHERE shortcode = %s"
     connection, cursor, connection_result = establish_db_connection()
     if connection_result["status"] == "error":
         return connection_result
     try:
         if not is_url(url):
             return {"status": "error", "message": "Invalid url provided."}
+
+        updated_time = datetime.now().strftime("%y-%m-%d %H:%M:%S")
         
-        cursor.execute(db_query, (url, key))
+        cursor.execute(db_query, (url, updated_time, key))
         if cursor.rowcount == 0:
             return {"status": "error", "message": f"No item found with short code: {key}."}
         else:
