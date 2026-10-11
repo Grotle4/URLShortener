@@ -101,7 +101,7 @@ def check_for_dupes(short_key: str, cursor, connection):
         check_for_dupes(new_string, cursor, connection)
 
 
-def retrieve_entry(key: str):
+def retrieve_entry(key: str, want_stats: bool):
     db_query = "SELECT * FROM urls WHERE shortcode = %s"
     db_access_query = "UPDATE urls SET accessCount = accessCount + 1 WHERE shortcode = %s"
 
@@ -118,8 +118,14 @@ def retrieve_entry(key: str):
         else:
             cursor.execute(db_access_query, (key,))
             connection.commit()
-
-            return results, {"status": "success", "message": "Sucessfully retrieved item."}
+            if want_stats:
+                return results, {"status": "success", "message": "Sucessfully retrieved item."}
+            else:
+                print(f"{results} - {type(results)}")
+                remove_count = list(results)
+                remove_count.pop(5)
+                results = tuple(remove_count)
+                return results, {"status": "success", "message": "Sucessfully retrieved item."}
         
     except mysql.connector.Error as e:
         return {}, {"status": "error", "message": f"{e.msg}"}

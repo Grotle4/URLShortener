@@ -6,68 +6,70 @@ import db
 app = Flask(__name__, template_folder="templates")
 
 @app.route("/")
+@app.route("/<path:path>")
 def catch_all():
-    return render_template("homepage.html")
+    return "The requested endpoint doesn't exist.", 404 
 
 
 
-@app.before_request
-def check_method_override():
-    g.effective_method = request.method
+# @app.before_request
+# def check_method_override():
+#     g.effective_method = request.method
 
-    if request.method == "POST":
-        method = request.form.get("_method", "").upper()
-        if method in {"PUT", "DELETE"}:
-            g.effective_method = method
+#     if request.method == "POST":
+#         method = request.form.get("_method", "").upper()
+#         if method in {"PUT", "DELETE"}:
+#             g.effective_method = method
 
 
 
 @app.route("/shorten", methods=["POST", "GET", "PUT", "DELETE"])
 def shorten_url():
-    match g.effective_method:
+    match request.method:
         case "POST":
-            submitted_url = request.form.get('url')
+            data = request.get_json()
+            submitted_url = data.get('url')
             db_result, short_key = parse_URL.process_url(submitted_url)
             if db_result["status"] == "error":
-                return render_template("error_page.html", error_message=db_result["message"])
+                #return render_template("error_page.html", error_message=db_result["message"])
+                return f"Error: {db_result["message"]}", 404
             
-            return render_template("homepage.html", shortcode=f"Success! Heres your url: shorten.com/{short_key}")
+            #return render_template("homepage.html", shortcode=f"Success! Heres your url: shorten.com/{short_key}")
+            return f"Success, entry with short code {short_key} has been added!", 200
+
+        
+
+
+@app.route("/shorten/<string:shortcode>", methods=["GET","PUT","DELETE"])
+def parse_shortcode(shortcode=None):
+    match request.method:
         case "GET":
-            shortcode = request.args.get("shortcode")
-            results, db_result = db.retrieve_entry(shortcode)
+            results, db_result = db.retrieve_entry(shortcode, False)
             if db_result["status"] == "error":
-                return render_template("error_page.html", error_message=db_result["message"])
+                return jsonify(db_result), 400
             
-            return render_template("entry_page.html", id=results[0], url=results[1], shortcode=results[2], created_at=results[3], updated_at=results[4])
+            return jsonify(results), 201
         case "PUT":
-            shortcode = request.form.get("shortcode")
-            url = request.form.get("url")
+            data = request.get_json()
+            url = data.get('url')
             db_result = db.update_entry(shortcode, url)
             if db_result["status"] == "error":
-                return render_template("error_page.html", error_message=db_result["message"])
+                return jsonify(db_result), 400
             
-            return render_template("homepage.html", shortcode=f"Success! Successfully updated entry {shortcode} with URL: {url}")
+            return f"Updated entry {shortcode} successfully", 201
         case "DELETE":
-            shortcode = request.form.get("shortcode")
             db_result = db.delete_entry(shortcode)
             if db_result["status"] == "error":
-                return render_template("error_page.html", error_message=db_result["message"])
+                return jsonify(db_result), 400
             
             return f"Deleted entry {shortcode} succesfully", 201
+        
 
-
-@app.route("/shorten/stats", methods=["GET"])
-def get_stats():
-    shortcode = request.args.get("shortcode")
-    results, db_result = db.retrieve_entry(shortcode)
+@app.route("/shorten/<string:shortcode>/stats", methods=["GET"])
+def get_stats(shortcode=None):
+    results, db_result = db.retrieve_entry(shortcode, True)
     if db_result["status"] == "error":
         return render_template("error_page.html", error_message=db_result["message"])
     
-    return render_template("entry_page.html", 
-                            id=results[0], 
-                            url=results[1], 
-                            shortcode=results[2], 
-                            created_at=results[3], 
-                            updated_at=results[4],
-                            access_count=f"Number of times accessed: {results[5]}")
+    return jsonify(results), 201
 
