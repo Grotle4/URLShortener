@@ -1,8 +1,16 @@
 from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
 import parse_URL
 import db
 
 app = Flask(__name__, template_folder="templates")
+CORS(app, resources={
+    r"/*": {
+        "origins": ["http://127.0.0.1:5500"],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"]
+    }
+})
 
 @app.route("/")
 @app.route("/<path:path>")
@@ -15,6 +23,7 @@ def shorten_url():
     match request.method:
         case "POST":
             data = request.get_json()
+            print(data)
             submitted_url = data.get('url')
             db_result, short_key = parse_URL.process_url(submitted_url)
             if db_result["status"] == "error":
@@ -27,7 +36,7 @@ def shorten_url():
 def parse_shortcode(shortcode=None):
     match request.method:
         case "GET":
-            print("testing if this is pinging.")
+            print(shortcode)
             results, db_result = db.retrieve_entry(shortcode, False)
             if db_result["status"] == "error":
                 return jsonify(db_result), 400
@@ -54,6 +63,11 @@ def get_stats(shortcode=None):
     results, db_result = db.retrieve_entry(shortcode, True)
     if db_result["status"] == "error":
         return render_template("error_page.html", error_message=db_result["message"])
+        
     
     return jsonify(results), 201
 
+
+
+if __name__ == "__main__":
+    app.run(port=5000)

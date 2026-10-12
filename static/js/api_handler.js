@@ -1,8 +1,7 @@
  const apiUrl = 'http://127.0.0.1:5000'
 
 async function getEntry(){
-    const rawString = document.getElementById('retrieve_shortcode').value;
-    const shortcode = encodeURIComponent(rawString);
+    const shortcode = document.getElementById('retrieve_shortcode').value;
     const apiCall = `/shorten/${shortcode}`;
 
     try {
@@ -16,8 +15,7 @@ async function getEntry(){
 }
 
 async function sendEntry(){
-    const rawString = document.getElementById('url').value;
-    const url = encodeURIComponent(rawString);
+    const url = document.getElementById('url').value;
     const urlData = {"url": url}
     const apiCall = '/shorten'
 
