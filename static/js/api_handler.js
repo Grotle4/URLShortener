@@ -42,6 +42,9 @@ async function getEntry(){
     })
     .then(data =>{
         console.log('Success from API', data);
+        //Need to check out how js recieves this new data.
+        localStorage.setItem("recieved_data", JSON.stringify(data))
+        window.locataion.href = "templates/entry_page.html"
     })
     .catch(error =>{
         console.error('Error:', error);
@@ -94,9 +97,11 @@ async function deleteEntry(){
     .catch(error =>{
         console.error('Error:', error);
     })
+    
+}
 
-
-    async function getEntryStats(){
+async function getEntryStats(){
+    //Need to remove access_count from dict if not loading stats menu.
     const shortcode = document.getElementById('retrieve_shortcode').value;
     const apiCall = `/shorten/${shortcode}/stats`;
 
@@ -115,5 +120,4 @@ async function deleteEntry(){
     .catch(error =>{
         console.error('Error:', error);
     })
-}
 }
