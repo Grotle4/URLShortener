@@ -7,7 +7,7 @@ app = Flask(__name__, template_folder="templates")
 CORS(app, resources={
     r"/*": {
         "origins": ["http://127.0.0.1:5500"],
-        "methods": ["GET", "POST", "OPTIONS"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         "allow_headers": ["Content-Type"]
     }
 })
@@ -45,12 +45,15 @@ def parse_shortcode(shortcode=None):
         case "PUT":
             data = request.get_json()
             url = data.get('url')
+            print(data, url)
             db_result = db.update_entry(shortcode, url)
             if db_result["status"] == "error":
                 return jsonify(db_result), 400
             
             return f"Updated entry {shortcode} successfully", 201
         case "DELETE":
+            print("trying to delete")
+            print(shortcode)
             db_result = db.delete_entry(shortcode)
             if db_result["status"] == "error":
                 return jsonify(db_result), 400

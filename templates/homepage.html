@@ -19,28 +19,20 @@
         <button onclick="getEntry()">Search</button>
     </div>
     <div>
-        <form method="post" action="/shorten">
-            <input type="hidden" name="_method" value="PUT">
-            <p>Enter a short code to update in database</p>
-            <input type="text" placeholder="Short Code" name="shortcode" id="update_shortcode">
-            <input type="text" placeholder="New URL" name="url" id="update-url">
-            <button onclick="getEntry()">Update</button>
-        </form>
+        <p>Enter a short code to update in database</p>
+        <input type="text" placeholder="Short Code" name="shortcode" id="update_shortcode">
+        <input type="text" placeholder="New URL" name="update_url" id="update_url">
+        <button onclick="updateEntry()">Update</button>
     </div>
     <div>
-        <form method="post" action="/shorten">
-            <input type="hidden" name="_method" value="DELETE">
-            <p>Enter a short code to delete in database</p>
-            <input type="text" placeholder="Short Code" name="shortcode" id="delete_shortcode">
-            <button type="submit">Update</button>
-        </form>
+        <p>Enter a short code to delete in database</p>
+        <input type="text" placeholder="Short Code" name="shortcode" id="delete_shortcode">
+        <button onclick="deleteEntry()">Update</button>
     </div>
     <div>
-        <form method="get" action="/shorten/stats">
-            <p>Enter a short code to retrieve stats for an entry from database.</p>
-            <input type="text" placeholder="Short Code" name="shortcode" id="stats_shortcode">
-            <button type="submit">Search</button>
-        </form>
+        <p>Enter a short code to retrieve stats for an entry from database.</p>
+        <input type="text" placeholder="Short Code" name="shortcode" id="stats_shortcode">
+        <button onclick="getEntryStats()">Search</button>
     </div>
 </body>
 </html>

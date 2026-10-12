@@ -1,18 +1,4 @@
- const apiUrl = 'http://127.0.0.1:5000'
-
-async function getEntry(){
-    const shortcode = document.getElementById('retrieve_shortcode').value;
-    const apiCall = `/shorten/${shortcode}`;
-
-    try {
-        const response = await fetch(apiUrl+apiCall);
-        const data = await response.json()
-        document.getElementById('responseOutput').innerText = data.message;
-    }
-    catch (error){
-        console.error('Error communicating with API:', error)
-    }
-}
+const apiUrl = 'http://127.0.0.1:5000'
 
 async function sendEntry(){
     const url = document.getElementById('url').value;
@@ -39,4 +25,95 @@ async function sendEntry(){
         console.error('Error:', error);
     })
     
+}
+
+async function getEntry(){
+    const shortcode = document.getElementById('retrieve_shortcode').value;
+    const apiCall = `/shorten/${shortcode}`;
+
+    const response = await fetch(apiUrl+apiCall,{
+        method: 'GET',
+    })
+    .then (response =>{
+        if (!response.ok){
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data =>{
+        console.log('Success from API', data);
+    })
+    .catch(error =>{
+        console.error('Error:', error);
+    })
+}
+
+async function updateEntry(){
+    const shortcode = document.getElementById('update_shortcode').value;
+    const url = document.getElementById('update_url').value;
+    const apiCall = `/shorten/${shortcode}`;
+    const urlData = {"url": url}
+
+    const response = await fetch(apiUrl+apiCall,{
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(urlData)
+    })
+    .then (response =>{
+        if (!response.ok){
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data =>{
+        console.log('Success from API', data);
+    })
+    .catch(error =>{
+        console.error('Error:', error);
+    })
+}
+
+async function deleteEntry(){
+    const shortcode = document.getElementById('delete_shortcode').value;
+    const apiCall = `/shorten/${shortcode}`;
+
+    const response = await fetch(apiUrl+apiCall,{
+        method: 'DELETE',
+    })
+    .then (response =>{
+        if (!response.ok){
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data =>{
+        console.log('Success from API', data);
+    })
+    .catch(error =>{
+        console.error('Error:', error);
+    })
+
+
+    async function getEntryStats(){
+    const shortcode = document.getElementById('retrieve_shortcode').value;
+    const apiCall = `/shorten/${shortcode}/stats`;
+
+    const response = await fetch(apiUrl+apiCall,{
+        method: 'GET',
+    })
+    .then (response =>{
+        if (!response.ok){
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data =>{
+        console.log('Success from API', data);
+    })
+    .catch(error =>{
+        console.error('Error:', error);
+    })
+}
 }
