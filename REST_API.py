@@ -13,7 +13,6 @@ CORS(app, resources={
 })
 
 @app.route("/")
-@app.route("/<path:path>")
 def catch_all():
     return "The requested endpoint doesn't exist.", 404 
 
@@ -29,14 +28,13 @@ def shorten_url():
             if db_result["status"] == "error":
                 return f"Error: {db_result["message"]}", 404
             
-            return f"Success, entry with short code {short_key} has been added!", 200
+            return jsonify({"message": f"Success, entry with short code {short_key} has been added!"}), 200
 
         
 @app.route("/shorten/<string:shortcode>", methods=["GET","PUT","DELETE"])
 def parse_shortcode(shortcode=None):
     match request.method:
         case "GET":
-            print(shortcode)
             results, db_result = db.retrieve_entry(shortcode, False)
             if db_result["status"] == "error":
                 return jsonify(db_result), 400
@@ -50,7 +48,7 @@ def parse_shortcode(shortcode=None):
             if db_result["status"] == "error":
                 return jsonify(db_result), 400
             
-            return f"Updated entry {shortcode} successfully", 201
+            return jsonify({"message": f"Updated entry {shortcode} successfully"}), 201
         case "DELETE":
             print("trying to delete")
             print(shortcode)
@@ -58,14 +56,15 @@ def parse_shortcode(shortcode=None):
             if db_result["status"] == "error":
                 return jsonify(db_result), 400
             
-            return f"Deleted entry {shortcode} succesfully", 201
+            return jsonify({"message": f"Deleted entry {shortcode} succesfully"}), 201
         
 
 @app.route("/shorten/<string:shortcode>/stats", methods=["GET"])
 def get_stats(shortcode=None):
+    print("statting")
     results, db_result = db.retrieve_entry(shortcode, True)
     if db_result["status"] == "error":
-        return render_template("error_page.html", error_message=db_result["message"])
+        return jsonify({"message": f"Error: {db_result["message"]}"}), 400
         
     
     return jsonify(results), 201

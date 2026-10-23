@@ -20,6 +20,9 @@ async function sendEntry(){
     })
     .then(data =>{
         console.log('Success from API', data);
+        document.getElementById("status_message").textContent = data.message;
+        clearElements()
+
     })
     .catch(error =>{
         console.error('Error:', error);
@@ -28,6 +31,7 @@ async function sendEntry(){
 }
 
 async function getEntry(){
+    console.log("get entry")
     const shortcode = document.getElementById('retrieve_shortcode').value;
     const apiCall = `/shorten/${shortcode}`;
 
@@ -71,6 +75,8 @@ async function updateEntry(){
     })
     .then(data =>{
         console.log('Success from API', data);
+        document.getElementById("status_message").textContent = data.message;
+        clearElements()
     })
     .catch(error =>{
         console.error('Error:', error);
@@ -92,6 +98,8 @@ async function deleteEntry(){
     })
     .then(data =>{
         console.log('Success from API', data);
+        document.getElementById("status_message").textContent = data.message;
+        clearElements()
     })
     .catch(error =>{
         console.error('Error:', error);
@@ -100,14 +108,14 @@ async function deleteEntry(){
 }
 
 async function getEntryStats(){
-    //Need to remove access_count from dict if not loading stats menu.
-    const shortcode = document.getElementById('retrieve_shortcode').value;
+    const shortcode = document.getElementById('stats_shortcode').value;
     const apiCall = `/shorten/${shortcode}/stats`;
 
     const response = await fetch(apiUrl+apiCall,{
         method: 'GET',
     })
     .then (response =>{
+        console.log(response)
         if (!response.ok){
             throw new Error('Network response was not ok');
         }
@@ -121,4 +129,13 @@ async function getEntryStats(){
     .catch(error =>{
         console.error('Error:', error);
     })
+}
+
+function clearElements(){
+    document.getElementById("url").value = "";
+    document.getElementById("retrieve_shortcode").value = "";
+    document.getElementById("update_shortcode").value = "";
+    document.getElementById("update_url").value = "";
+    document.getElementById("delete_shortcode").value = "";
+    document.getElementById("stats_shortcode").value = "";
 }
