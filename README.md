@@ -22,16 +22,18 @@ operations into individual Python modules. A frontend is included in the
 
 ## Technology Stack
 
-  Technology                 Purpose
-  -------------------------- ------------------------------------------------
-  Python                     Backend application logic
-  Flask                      REST API and routing
-  Flask-CORS                 Cross-origin requests from the frontend
-  MySQL                      Persistent URL mapping storage
-  `mysql-connector-python`   Connects Python to MySQL
-  `python-dotenv`            Loads configuration from environment variables
-  `validators`               Validates submitted URLs
-  HTML / JavaScript          Frontend interface and API requests
+ ## Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| Python | Backend application logic |
+| Flask | REST API and routing |
+| Flask-CORS | Cross-origin requests from the frontend |
+| MySQL | Persistent URL mapping storage |
+| `mysql-connector-python` | Connects Python to MySQL |
+| `python-dotenv` | Loads configuration from environment variables |
+| `validators` | Validates submitted URLs |
+| HTML / JavaScript | Frontend interface and API requests |
 
 ## Project Structure
 
