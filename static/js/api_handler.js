@@ -42,9 +42,8 @@ async function getEntry(){
     })
     .then(data =>{
         console.log('Success from API', data);
-        //Need to check out how js recieves this new data.
-        localStorage.setItem("recieved_data", JSON.stringify(data))
-        window.locataion.href = "templates/entry_page.html"
+        localStorage.setItem("recieved_data", JSON.stringify(data));
+        window.location.href = "entry_page.html";
     })
     .catch(error =>{
         console.error('Error:', error);
@@ -116,6 +115,8 @@ async function getEntryStats(){
     })
     .then(data =>{
         console.log('Success from API', data);
+        localStorage.setItem("recieved_data", JSON.stringify(data));
+        window.location.href = "entry_page.html";
     })
     .catch(error =>{
         console.error('Error:', error);

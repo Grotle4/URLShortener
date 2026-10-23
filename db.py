@@ -47,6 +47,8 @@ def establish_db_connection():
     db_host = os.getenv("HOST")
     db_name = os.getenv("DB")
 
+    print(f"{db_user} - {db_pass} - {db_host} - {db_name}")
+
     try:
         connection = mysql.connector.connect(
             host=db_host,
