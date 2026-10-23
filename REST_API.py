@@ -26,7 +26,7 @@ def shorten_url():
             submitted_url = data.get('url')
             db_result, short_key = parse_URL.process_url(submitted_url)
             if db_result["status"] == "error":
-                return f"Error: {db_result["message"]}", 404
+                return f"{db_result["message"]}", 404
             
             return jsonify({"message": f"Success, entry with short code {short_key} has been added!"}), 200
 
@@ -35,6 +35,7 @@ def shorten_url():
 def parse_shortcode(shortcode=None):
     match request.method:
         case "GET":
+            print("this runs?")
             results, db_result = db.retrieve_entry(shortcode, False)
             if db_result["status"] == "error":
                 return jsonify(db_result), 400
@@ -64,7 +65,9 @@ def get_stats(shortcode=None):
     print("statting")
     results, db_result = db.retrieve_entry(shortcode, True)
     if db_result["status"] == "error":
-        return jsonify({"message": f"Error: {db_result["message"]}"}), 400
+        return jsonify({"message": f"{db_result["message"]}"}), 400
+    if shortcode == "":
+        return jsonify({"message": f"Failed to fetch"}), 400
         
     
     return jsonify(results), 201

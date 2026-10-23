@@ -5,53 +5,53 @@ async function sendEntry(){
     const urlData = {"url": url}
     const apiCall = '/shorten'
 
-    const response = await fetch(apiUrl+apiCall,{
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(urlData)
-    })
-    .then (response =>{
-        if (!response.ok){
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data =>{
-        console.log('Success from API', data);
-        document.getElementById("status_message").textContent = data.message;
-        clearElements()
+    try {
+        const response = await fetch(apiUrl+apiCall,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(urlData)
+        });
+        const data = await readApiResponse(response);
 
-    })
-    .catch(error =>{
-        console.error('Error:', error);
-    })
-    
+        if (!response.ok){
+            throw new Error(getApiMessage(data, `Request failed (${response.status})`));
+        }
+
+        console.log('Success from API', data);
+        document.getElementById("status_message").textContent =
+            getApiMessage(data, "Request completed successfully.");
+        clearElements();
+    } catch (error) {
+        console.error(error);
+        document.getElementById("status_message").textContent =
+            error instanceof Error ? error.message : String(error);
+    }
 }
 
 async function getEntry(){
-    console.log("get entry")
     const shortcode = document.getElementById('retrieve_shortcode').value;
     const apiCall = `/shorten/${shortcode}`;
 
-    const response = await fetch(apiUrl+apiCall,{
-        method: 'GET',
-    })
-    .then (response =>{
+    try {
+        const response = await fetch(apiUrl+apiCall,{
+            method: 'GET',
+        });
+        const data = await readApiResponse(response);
+
         if (!response.ok){
-            throw new Error('Network response was not ok');
+            throw new Error(getApiMessage(data, `Request failed (${response.status})`));
         }
-        return response.json();
-    })
-    .then(data =>{
+
         console.log('Success from API', data);
         localStorage.setItem("recieved_data", JSON.stringify(data));
         window.location.href = "entry_page.html";
-    })
-    .catch(error =>{
-        console.error('Error:', error);
-    })
+    } catch (error) {
+        console.error(error);
+        document.getElementById("status_message").textContent =
+            error instanceof Error ? error.message : String(error);
+    }
 }
 
 async function updateEntry(){
@@ -60,75 +60,99 @@ async function updateEntry(){
     const apiCall = `/shorten/${shortcode}`;
     const urlData = {"url": url}
 
-    const response = await fetch(apiUrl+apiCall,{
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(urlData)
-    })
-    .then (response =>{
+    try {
+        const response = await fetch(apiUrl+apiCall,{
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(urlData)
+        });
+        const data = await response.json();
+
         if (!response.ok){
-            throw new Error('Network response was not ok');
+            throw new Error(data.message || `Request failed (${response.status})`);
         }
-        return response.json();
-    })
-    .then(data =>{
+
         console.log('Success from API', data);
-        document.getElementById("status_message").textContent = data.message;
-        clearElements()
-    })
-    .catch(error =>{
-        console.error('Error:', error);
-    })
+        document.getElementById("status_message").textContent = String(data.message);
+        clearElements();
+    } catch (error) {
+        console.error(error);
+        document.getElementById("status_message").textContent =
+            error instanceof Error ? error.message : String(error);
+    }
 }
 
 async function deleteEntry(){
     const shortcode = document.getElementById('delete_shortcode').value;
     const apiCall = `/shorten/${shortcode}`;
 
-    const response = await fetch(apiUrl+apiCall,{
-        method: 'DELETE',
-    })
-    .then (response =>{
+    try {
+        const response = await fetch(apiUrl+apiCall,{
+            method: 'DELETE',
+        });
+        const data = await readApiResponse(response);
+
         if (!response.ok){
-            throw new Error('Network response was not ok');
+            throw new Error(getApiMessage(data, `Request failed (${response.status})`));
         }
-        return response.json();
-    })
-    .then(data =>{
+
         console.log('Success from API', data);
-        document.getElementById("status_message").textContent = data.message;
-        clearElements()
-    })
-    .catch(error =>{
-        console.error('Error:', error);
-    })
-    
+        document.getElementById("status_message").textContent =
+            getApiMessage(data, "Request completed successfully.");
+        clearElements();
+    } catch (error) {
+        console.error(error);
+        document.getElementById("status_message").textContent =
+            error instanceof Error ? error.message : String(error);
+    }
 }
 
 async function getEntryStats(){
     const shortcode = document.getElementById('stats_shortcode').value;
+    if (shortcode == ""){
+        document.getElementById("status_message").textContent = "Failed to fetch"
+        throw new Error("Failed to fetch");
+    }
     const apiCall = `/shorten/${shortcode}/stats`;
 
-    const response = await fetch(apiUrl+apiCall,{
-        method: 'GET',
-    })
-    .then (response =>{
-        console.log(response)
+    try {
+        const response = await fetch(apiUrl+apiCall,{
+            method: 'GET',
+        });
+        const data = await readApiResponse(response);
+
         if (!response.ok){
-            throw new Error('Network response was not ok');
+            throw new Error(getApiMessage(data, `Request failed (${response.status})`));
         }
-        return response.json();
-    })
-    .then(data =>{
+
         console.log('Success from API', data);
         localStorage.setItem("recieved_data", JSON.stringify(data));
         window.location.href = "entry_page.html";
-    })
-    .catch(error =>{
-        console.error('Error:', error);
-    })
+    } catch (error) {
+        console.error(error);
+        document.getElementById("status_message").textContent =
+            error instanceof Error ? error.message : String(error);
+    }
+}
+
+async function readApiResponse(response){
+    const contentType = response.headers.get("content-type") || "";
+    if (contentType.includes("application/json")){
+        return response.json();
+    }
+    return response.text();
+}
+
+function getApiMessage(data, fallback){
+    if (typeof data === "string" && data){
+        return data;
+    }
+    if (data && typeof data.message === "string"){
+        return data.message;
+    }
+    return fallback;
 }
 
 function clearElements(){

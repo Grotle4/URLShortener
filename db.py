@@ -153,6 +153,10 @@ def update_entry(key: str, url: str):
         if not is_url(url):
             return {"status": "error", "message": "Invalid url provided."}
 
+        is_dupe = validate_update_entry(url, connection, cursor, key)
+        if is_dupe:
+            return {"status": "error", "message": "Duplicate url was provided."}
+
         updated_time = datetime.now().strftime("%y-%m-%d %H:%M:%S")
         
         cursor.execute(db_query, (url, updated_time, key))
@@ -172,6 +176,18 @@ def update_entry(key: str, url: str):
         if 'connection' in locals() and connection.is_connected():
             connection.close()
 
+
+def validate_update_entry(new_url: str, connection, cursor, shortcode: str):
+    db_query = "SELECT * FROM urls WHERE shortcode = %s"
+    cursor.execute(db_query, (shortcode,))
+    found_entry = cursor.fetchone()
+    print(f"found entry: {found_entry[1]}")
+    print(f"new url: {new_url}")
+    if found_entry[1] == new_url:
+        print("dupe found")
+        return True
+    else:
+        return False
 
 def delete_entry(key: str):
     db_query = "DELETE FROM urls WHERE shortcode = %s"
